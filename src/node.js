@@ -23,7 +23,7 @@ app.get('/', async (req, res) => {
 app.post('/', async (req, res) => {
   try {
     const con = await client.connect();
-    const dbRes = await con.db('demo1').collection('cars').insertOne({ name: 'Rokas', surname: 'Ruzevicius' });
+    const dbRes = await con.db('demo1').collection('cars').insertOne({ name: 'Alisa', surname: 'Kate' });
     await con.close();
     return res.send(dbRes);
   } catch (err) {
