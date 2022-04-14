@@ -1,0 +1,19 @@
+{
+  "name": "node-7-cao1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "node.js",
+  "scripts": {
+    "start": "nodemon src/node.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "eslint": "^8.13.0",
+    "express": "^4.17.3",
+    "mongodb": "^4.5.0"
+  }
+}
