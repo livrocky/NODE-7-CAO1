@@ -1,15 +1,21 @@
 const express = require('express');
+const morgan = require('morgan');
 const cors = require('cors');
-const { response } = require('express');
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const app = express();
-const PORT = 3003;
 
 const URI = 'mongodb+srv://RokasR:Nesakysiu1@cao.q3voh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-
 const client = new MongoClient(URI);
 
-app.get('/', async (req, res) => {
+const PORT = 3003;
+
+// Global MiddleWare
+app.use(morgan('dev'));
+app.use(cors());
+app.use(express.json());
+
+app.get('/pets', async (req, res) => {
   try {
     const con = await client.connect();
     const data = await con.db('node8').collection('pets').find().toArray();
@@ -24,7 +30,7 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.post('/', async (req, res) => {
+app.post('/pets', async (req, res) => {
   try {
     const con = await client.connect();
     const dbRes = await con.db('node8').collection('pets').insertOne({ name: 'Alisa', type: 'Kate', age: 7 });
@@ -32,6 +38,46 @@ app.post('/', async (req, res) => {
     return res.send(dbRes);
   } catch (err) {
     res.status(500).send({ err });
+  }
+});
+
+app.get('/pets/:type', async (req, res) => {
+  const { type } = req.params;
+  try {
+    const con = await client.connect();
+    // PASIIMTI PAGAL KITA KRITERIJU, TYPE (DINAMINIS)//
+    const data = await con
+      .db('node8')
+      .collection('pets')
+      .find({ type: { $gt: +type } })
+      .toArray();
+    await con.close();
+    return res.send(data);
+  } catch (err) {
+    res.status(500).send({ err });
+  }
+});
+
+app.get('/pets/:byoldest', async (req, res) => {
+  try {
+    const { sortOrder } = req.params;
+    let order = 1;
+    order = sortOrder = 'byoldest' ? -1 : 1;
+    const options = {
+      sort: { age: order },
+    };
+    //prisijungti
+    await client.connect();
+    const collection = client.db('node8').collection('pets');
+    const petsArr = await collection.find({}, options).toArray();
+    console.log('connected');
+    res.json(petsArr);
+  } catch (err) {
+    console.error('error in get users', err);
+    res.status(500).json('something is wrong');
+  } finally {
+    //uzdaryti prisijungima
+    await client.close();
   }
 });
 

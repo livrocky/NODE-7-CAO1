@@ -1,8 +1,11 @@
 ### paduoda visus gyvūnus.
-GET http://localhost:3003/
+GET http://localhost:3003/pets
 
 ### įkelia vieną gyvūną.
-POST http://localhost:3003/
+POST http://localhost:3003/pets
 
 ### by type “/pets/:type”, kuris dinaminis ir paduoda įrašyto tipo gyvūnus (pvz tik šunis).
-GET 
+GET http://localhost:3003/pets/Suo
+
+### age descending
+GET http://localhost:3003/pets/byoldest
