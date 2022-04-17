@@ -1,5 +1,8 @@
-###
-GET http://localhost:3002/
+### paduoda visus gyvūnus.
+GET http://localhost:3003/
 
-###
-POST http://localhost:3002/
+### įkelia vieną gyvūną.
+POST http://localhost:3003/
+
+### by type “/pets/:type”, kuris dinaminis ir paduoda įrašyto tipo gyvūnus (pvz tik šunis).
+GET 
