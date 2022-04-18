@@ -15,6 +15,8 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
+// Routes
+
 app.get('/pets', async (req, res) => {
   try {
     const con = await client.connect();
@@ -41,35 +43,18 @@ app.post('/pets', async (req, res) => {
   }
 });
 
-app.get('/pets/:type', async (req, res) => {
-  const { type } = req.params;
+app.get('/pets/byoldest', async (req, res) => {
   try {
-    const con = await client.connect();
-    // PASIIMTI PAGAL KITA KRITERIJU, TYPE (DINAMINIS)//
-    const data = await con
-      .db('node8')
-      .collection('pets')
-      .find({ type: { $gt: +type } })
-      .toArray();
-    await con.close();
-    return res.send(data);
-  } catch (err) {
-    res.status(500).send({ err });
-  }
-});
-
-app.get('/pets/:byoldest', async (req, res) => {
-  try {
-    const { sortOrder } = req.params;
-    let order = 1;
-    order = sortOrder = 'byoldest' ? -1 : 1;
-    const options = {
-      sort: { age: order },
-    };
+    // const { sortOrder } = req.params;
+    // let order = 1;
+    // order = sortOrder = 'byoldest' ? -1 : 1;
+    // const options = {
+    //   sort: { age: order },
+    // };
     //prisijungti
     await client.connect();
-    const collection = client.db('node8').collection('pets');
-    const petsArr = await collection.find({}, options).toArray();
+    const collection = await client.db('node8').collection('pets');
+    const petsArr = await collection.find({}).sort({ age: -1 }).toArray();
     console.log('connected');
     res.json(petsArr);
   } catch (err) {
@@ -78,6 +63,26 @@ app.get('/pets/:byoldest', async (req, res) => {
   } finally {
     //uzdaryti prisijungima
     await client.close();
+  }
+});
+
+app.get('/pets/type/:type', async (req, res) => {
+  const { type } = req.params;
+  const typesArr = await findPetsByType(type);
+  if (typesArr === false) {
+    res.status(500).json('not work');
+  }
+  res.json(typesArr);
+  async function findPetsByType(typeParam) {
+    try {
+      const con = await client.connect();
+      // PASIIMTI PAGAL KITA KRITERIJU, TYPE (DINAMINIS)//
+      const data = await con.db('node8').collection('pets').find({ type: typeParam }).toArray();
+      await con.close();
+      return res.send(data);
+    } catch (err) {
+      res.status(500).send({ err });
+    }
   }
 });
 
