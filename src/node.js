@@ -35,7 +35,7 @@ app.get('/pets', async (req, res) => {
 app.post('/pets', async (req, res) => {
   try {
     const con = await client.connect();
-    const dbRes = await con.db('node8').collection('pets').insertOne({ name: 'Alisa', type: 'Kate', age: 7 });
+    const dbRes = await con.db('node8').collection('pets').insertOne({ name: 'Alisa', type: 'Cat', age: 7 });
     await con.close();
     return res.send(dbRes);
   } catch (err) {
